@@ -1,0 +1,1 @@
+export { default } from 'ember-cartesian-product/macros/cartesian';
