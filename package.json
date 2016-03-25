@@ -11,7 +11,10 @@
     "start": "ember server",
     "test": "ember try:testall"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Simply360/ember-cartesian-product"
+  },
   "engines": {
     "node": ">= 4.0.0"
   },
@@ -32,7 +35,9 @@
     "ember-resolver": "^2.0.3",
     "ember-suave": "2.0.1",
     "ember-try": "^0.1.2",
-    "loader.js": "^4.0.0"
+    "loader.js": "^4.0.0",
+    "publish": "^0.5.0",
+    "rsvp": "^3.2.1"
   },
   "keywords": [
     "ember-addon"
