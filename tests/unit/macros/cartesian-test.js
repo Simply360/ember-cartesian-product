@@ -10,6 +10,73 @@ const { collect } = computed;
 module('Unit | Macro | cartesian', {
 });
 
+test('Correct when target property is a regular array with one key containing an Ember.Array', function(assert) {
+  assert.expect(5);
+
+  let MyType = Ember.Object.extend({
+    val: cartesian('arrays')
+  });
+
+  let animals = Ember.A();
+  myObj = MyType.create({
+    arrays: [animals]
+  });
+
+  assert.deepEqual(myObj.get('val'), []);
+
+  run(() => {
+    animals.setObjects(['cat', 'dog', 'bird', 'mouse']);
+  });
+
+  assert.deepEqual(myObj.get('val'), [['cat'], ['dog'], ['bird'], ['mouse']]);
+
+  run(() => {
+    animals.pushObject('fish');
+  });
+
+  assert.deepEqual(myObj.get('val'), [['cat'], ['dog'], ['bird'], ['mouse'], ['fish']]);
+
+  run(() => {
+    animals.setObjects(['giraffe', 'ostrich']);
+  });
+
+  assert.deepEqual(myObj.get('val'), [['giraffe'], ['ostrich']]);
+
+  run(() => {
+    myObj.set('arrays', [['zebra']]);
+  });
+
+  assert.deepEqual(myObj.get('val'), [['zebra']]);
+});
+
+test('Correct when target property is a regular array with two keys containing plain arrays', function(assert) {
+  assert.expect(2);
+
+  let MyType = Ember.Object.extend({
+    val: cartesian('arrays')
+  });
+
+  let animals = ['cat', 'dog'];
+  let cars = ['chevy', 'honda'];
+  myObj = MyType.create({
+    arrays: [animals, cars]
+  });
+
+  assert.deepEqual(myObj.get('val'), [
+    ['cat', 'chevy'], ['cat', 'honda'],
+    ['dog', 'chevy'], ['dog', 'honda']
+  ]);
+
+  run(() => {
+    myObj.set('arrays', [cars, animals]);
+  });
+
+  assert.deepEqual(myObj.get('val'), [
+    ['chevy', 'cat'], ['chevy', 'dog'],
+    ['honda', 'cat'], ['honda', 'dog']
+  ]);
+});
+
 test('Correct when target property is an Ember.Array with one key', function(assert) {
   assert.expect(5);
 
