@@ -10,29 +10,6 @@ const { collect } = computed;
 module('Unit | Macro | cartesian', {
 });
 
-test('Correct when target property is undefined', function(assert) {
-  assert.expect(1);
-
-  let MyType = Ember.Object.extend({
-    val: cartesian('arrays')
-  });
-  myObj = MyType.create();
-
-  assert.deepEqual(myObj.get('val'), []);
-});
-
-test('Correct when target property is empty', function(assert) {
-  assert.expect(1);
-
-  let MyType = Ember.Object.extend({
-    val: cartesian('arrays'),
-    arrays: []
-  });
-  myObj = MyType.create();
-
-  assert.deepEqual(myObj.get('val'), []);
-});
-
 test('Correct when target property is an Ember.Array with one key', function(assert) {
   assert.expect(5);
 
@@ -273,3 +250,72 @@ test('Correct when target object changes from one Ember.Array to another', funct
     ['ostrich', 'tesla', 'New York'], ['ostrich', 'tesla', 'London']
   ], 'Correct after replacing the cars array');
 });
+
+function testFailureDueToBadTargetPropertyKey(description, val) {
+  test(description, function(assert) {
+    assert.expect(1);
+
+    run(() => {
+      assert.throws(() => {
+        Ember.Object.extend({
+          val: cartesian(val)
+        });
+      }, new Error('Assertion Failed: The first argument passed to "cartesian" must be a string.'));
+    });
+  });
+}
+
+testFailureDueToBadTargetPropertyKey('Assertion fails when first argument is undefined', undefined);
+testFailureDueToBadTargetPropertyKey('Assertion fails when first argument is 0', 0);
+testFailureDueToBadTargetPropertyKey('Assertion fails when first argument is a positive integer', 4);
+testFailureDueToBadTargetPropertyKey('Assertion fails when first argument is an array', []);
+
+function testFailureDueToBadTargetProperty(description, val) {
+  test(description, function(assert) {
+    assert.expect(1);
+
+    let MyType = Ember.Object.extend({
+      val: cartesian('arrays'),
+      arrays: val
+    });
+    myObj = MyType.create();
+
+    run(() => {
+      assert.throws(() => {
+        myObj.get('val');
+      }, new Error('Assertion Failed: "cartesian" requires that the value of the target property "arrays" be an array.'));
+    });
+  });
+}
+
+testFailureDueToBadTargetProperty('Assertion fails when target property is undefined', undefined);
+testFailureDueToBadTargetProperty('Assertion fails when target property is 0', 0);
+testFailureDueToBadTargetProperty('Assertion fails when target property is a positive integer', 4);
+testFailureDueToBadTargetProperty('Assertion fails when target property is an empty string', '');
+testFailureDueToBadTargetProperty('Assertion fails when target property is a non-empty string', 'asdf');
+
+function testFailureDueToBadElement(description, val) {
+  test('Assertion fails when an element in the target array is a number', function(assert) {
+    assert.expect(1);
+
+    let MyType = Ember.Object.extend({
+      val: cartesian('arrays')
+    });
+
+    myObj = MyType.create({
+      arrays: [['bird', 'cat'], val]
+    });
+
+    run(() => {
+      assert.throws(() => {
+        myObj.get('val');
+      }, new Error('Assertion Failed: "cartesian" requires that each element in the target array "arrays" be an array.'));
+    });
+  });
+}
+
+testFailureDueToBadElement('Assertion fails when an element in the target array is undefined', undefined);
+testFailureDueToBadElement('Assertion fails when an element in the target array is 0', 0);
+testFailureDueToBadElement('Assertion fails when an element in the target array is a positive integer', 4);
+testFailureDueToBadElement('Assertion fails when an element in the target array is an empty string', '');
+testFailureDueToBadElement('Assertion fails when an element in the target array is a non-empty string', 'asdf');

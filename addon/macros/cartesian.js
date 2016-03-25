@@ -1,16 +1,21 @@
 import Ember from 'ember';
 
-const { computed } = Ember;
+const { assert, computed, isArray } = Ember;
 
-export default function cartesian (arrayKey) {
-  let dependentKey = `${arrayKey}.@each.[]`;
+export default function cartesian(sourceArraysKey) {
+  assert(`The first argument passed to "cartesian" must be a string.`, typeof sourceArraysKey === 'string');
+  let dependentKey = `${sourceArraysKey}.@each.[]`;
 
   return computed(dependentKey, {
     get() {
-      let arrays = Ember.A(this.get(arrayKey) || []);
+      let sourceArrays = this.get(sourceArraysKey);
+      assert(`"cartesian" requires that the value of the target property "${sourceArraysKey}" be an array.`, isArray(sourceArrays));
+      let arrays = Ember.A(sourceArrays);
 
       let results = [];
       arrays.forEach((thisSourceArray, sourceArrayIndex) => {
+        assert(`"cartesian" requires that each element in the target array "${sourceArraysKey}" be an array.`,
+          Ember.isArray(thisSourceArray));
         let thisResultArray;
         if (sourceArrayIndex > 0) {
           let previousResultArrayLength = results.length;
