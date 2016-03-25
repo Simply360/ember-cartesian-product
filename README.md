@@ -2,6 +2,14 @@
 
 This addon provides a computed property macro that calculates the [cartesian product](https://en.wikipedia.org/wiki/Cartesian_product) of N arrays.
 
+## Installation
+
+```
+ember install ember-cartesian-product
+```
+
+_Note:_ This addon requires ember.js >= 2.0
+
 ## Usage
 
 The `cartesian` macro works by accepting a key to another property on the object whose value is an array of N arrays. The computed property's value will be equal to an array of N-tuple arrays, consisting of every distinct combination of one element from each the source arrays. For example, say you have an object with two arrays called `animals` and `colors`, and you want to calculate the cartesian product of those arrays.
@@ -88,27 +96,5 @@ subject.get('cartesianProduct');
    * ]
    */
 ```
-
-
-## Installation
-
-* `git clone` this repository
-* `npm install`
-* `bower install`
-
-## Running
-
-* `ember server`
-* Visit your app at http://localhost:4200.
-
-## Running Tests
-
-* `npm test` (Runs `ember try:testall` to test your addon against multiple Ember versions)
-* `ember test`
-* `ember test --server`
-
-## Building
-
-* `ember build`
 
 For more information on using ember-cli, visit [http://www.ember-cli.com/](http://www.ember-cli.com/).
