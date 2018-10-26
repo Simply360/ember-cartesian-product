@@ -1,11 +1,11 @@
-import Ember from 'ember';
+import { A } from '@ember/array';
+import EmberObject from '@ember/object';
+import { collect } from '@ember/object/computed';
+import { run } from '@ember/runloop';
 import cartesian from 'ember-cartesian-product';
 import { module, test } from 'qunit';
 
 let myObj;
-
-const { computed, run } = Ember;
-const { collect } = computed;
 
 module('Unit | Macro | cartesian', {
 });
@@ -13,11 +13,11 @@ module('Unit | Macro | cartesian', {
 test('Correct when target property is a regular array with one key containing an Ember.Array', function(assert) {
   assert.expect(5);
 
-  let MyType = Ember.Object.extend({
+  let MyType = EmberObject.extend({
     val: cartesian('arrays')
   });
 
-  let animals = Ember.A();
+  let animals = A();
   myObj = MyType.create({
     arrays: [animals]
   });
@@ -52,7 +52,7 @@ test('Correct when target property is a regular array with one key containing an
 test('Correct when target property is a regular array with two keys containing plain arrays', function(assert) {
   assert.expect(2);
 
-  let MyType = Ember.Object.extend({
+  let MyType = EmberObject.extend({
     val: cartesian('arrays')
   });
 
@@ -80,12 +80,12 @@ test('Correct when target property is a regular array with two keys containing p
 test('Correct when target property is an Ember.Array with one key', function(assert) {
   assert.expect(5);
 
-  let MyType = Ember.Object.extend({
+  let MyType = EmberObject.extend({
     val: cartesian('arrays'),
     arrays: collect('animals')
   });
 
-  let animals = Ember.A();
+  let animals = A();
   myObj = MyType.create({
     animals
   });
@@ -120,7 +120,7 @@ test('Correct when target property is an Ember.Array with one key', function(ass
 test('Correct when target property is an Ember.Array with two elements', function(assert) {
   assert.expect(8);
 
-  let MyType = Ember.Object.extend({
+  let MyType = EmberObject.extend({
     val: cartesian('arrays'),
     arrays: collect('animals', 'cars')
   });
@@ -132,14 +132,14 @@ test('Correct when target property is an Ember.Array with two elements', functio
 
   assert.deepEqual(myObj.get('val'), [], 'Correct initially');
 
-  let animals = Ember.A(['cat', 'dog', 'bird']);
+  let animals = A(['cat', 'dog', 'bird']);
   run(() => {
     myObj.set('animals', animals);
   });
 
   assert.deepEqual(myObj.get('val'), [], 'Correct after setting animals to a populated array');
 
-  let cars = Ember.A(['toyota', 'ford']);
+  let cars = A(['toyota', 'ford']);
   run(() => {
     myObj.set('cars', cars);
   });
@@ -200,7 +200,7 @@ test('Correct when target property is an Ember.Array with two elements', functio
 test('Correct when target object is an Ember.Array with three elements', function(assert) {
   assert.expect(6);
 
-  let MyType = Ember.Object.extend({
+  let MyType = EmberObject.extend({
     val: cartesian('arrays'),
     arrays: collect('animals', 'cars', 'cities')
   });
@@ -213,21 +213,21 @@ test('Correct when target object is an Ember.Array with three elements', functio
 
   assert.deepEqual(myObj.get('val'), [], 'Correct initially');
 
-  let animals = Ember.A(['cat', 'dog', 'bird']);
+  let animals = A(['cat', 'dog', 'bird']);
   run(() => {
     myObj.set('animals', animals);
   });
 
   assert.deepEqual(myObj.get('val'), [], 'Correct after setting animals to a populated array');
 
-  let cars = Ember.A(['toyota', 'ford']);
+  let cars = A(['toyota', 'ford']);
   run(() => {
     myObj.set('cars', cars);
   });
 
   assert.deepEqual(myObj.get('val'), [], 'Correct after setting cars to a populated array');
 
-  let cities = Ember.A(['Houston']);
+  let cities = A(['Houston']);
   run(() => {
     myObj.set('cities', cities);
   });
@@ -260,20 +260,20 @@ test('Correct when target object is an Ember.Array with three elements', functio
 test('Correct when target object changes from one Ember.Array to another', function(assert) {
   assert.expect(6);
 
-  let animals = Ember.A(['cat', 'dog', 'bird']);
-  let cars = Ember.A(['toyota', 'ford']);
-  let cities = Ember.A(['Houston']);
-  let MyType = Ember.Object.extend({
+  let animals = A(['cat', 'dog', 'bird']);
+  let cars = A(['toyota', 'ford']);
+  let cities = A(['Houston']);
+  let MyType = EmberObject.extend({
     val: cartesian('arrays')
   });
 
   myObj = MyType.create({
-    arrays: Ember.A([])
+    arrays: A([])
   });
 
   assert.deepEqual(myObj.get('val'), [], 'Correct initially');
 
-  let newArrays = Ember.A([animals]);
+  let newArrays = A([animals]);
   run(() => {
     myObj.set('arrays', newArrays);
   });
@@ -324,7 +324,7 @@ function testFailureDueToBadTargetPropertyKey(description, val) {
 
     run(() => {
       assert.throws(() => {
-        Ember.Object.extend({
+        EmberObject.extend({
           val: cartesian(val)
         });
       }, new Error('Assertion Failed: The first argument passed to "cartesian" must be a string.'));
@@ -341,7 +341,7 @@ function testFailureDueToBadTargetProperty(description, val) {
   test(description, function(assert) {
     assert.expect(1);
 
-    let MyType = Ember.Object.extend({
+    let MyType = EmberObject.extend({
       val: cartesian('arrays'),
       arrays: val
     });
@@ -365,7 +365,7 @@ function testFailureDueToBadElement(description, val) {
   test('Assertion fails when an element in the target array is a number', function(assert) {
     assert.expect(1);
 
-    let MyType = Ember.Object.extend({
+    let MyType = EmberObject.extend({
       val: cartesian('arrays')
     });
 
